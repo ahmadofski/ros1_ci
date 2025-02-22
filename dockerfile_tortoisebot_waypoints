@@ -31,6 +31,8 @@ RUN source /opt/ros/noetic/setup.bash \
 # Copy package source folders
 COPY ./tortoisebot/tortoisebot_gazebo /catkin_ws/src/tortoisebot/tortoisebot_gazebo
 COPY ./tortoisebot/tortoisebot_description /catkin_ws/src/tortoisebot/tortoisebot_description
+COPY ./tortoisebot_waypoints /catkin_ws/src/tortoisebot_waypoints
+
 
 
 # Build the Catkin workspace and ensure it's sourced
@@ -48,4 +50,6 @@ ENV ROS_HOSTNAME=localhost
 
 # Start a bash shell when the container starts
 ENTRYPOINT ["bash"]
-CMD ['-c','source /catkin_ws/devel/setup.bash ; roscore & roslaunch tortoisebot_gazebo tortoisebot_empty_world.launch headless:=true --wait']
+CMD ["-c","source /catkin_ws/devel/setup.bash ; roscore & roslaunch tortoisebot_gazebo tortoisebot_empty_world.launch headless:=true --wait"]
+
+#CMD ["bash"]
