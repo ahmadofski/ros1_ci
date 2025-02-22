@@ -1,0 +1,51 @@
+FROM osrf/ros:noetic-desktop-full-focal
+
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+# install build tools
+RUN apt-get install -y build-essential
+
+# Install Gazebo 11 and other dependencies
+RUN apt-get update && apt-get install -y \
+  gazebo11 \
+  ros-noetic-gazebo-ros-pkgs \
+  ros-noetic-gazebo-ros-control \
+  ros-noetic-ros-control \
+  ros-noetic-ros-controllers \
+  ros-noetic-joint-state-publisher \
+  ros-noetic-joint-state-controller \
+  ros-noetic-robot-state-publisher \
+  ros-noetic-robot-localization \
+  ros-noetic-xacro \
+  ros-noetic-tf2-ros \
+  ros-noetic-tf2-tools \
+  && rm -rf /var/lib/apt/lists/*
+
+# Create a Catkin workspace
+RUN source /opt/ros/noetic/setup.bash \
+ && mkdir -p /catkin_ws/src \
+ && cd /catkin_ws/src \
+ && catkin_init_workspace 
+
+# Copy package source folders
+COPY ./tortoisebot/tortoisebot_gazebo /catkin_ws/src/tortoisebot/tortoisebot_gazebo
+COPY ./tortoisebot/tortoisebot_description /catkin_ws/src/tortoisebot/tortoisebot_description
+
+
+# Build the Catkin workspace and ensure it's sourced
+RUN source /opt/ros/noetic/setup.bash \
+ && cd catkin_ws \
+ && catkin_make
+RUN echo "source /catkin_ws/devel/setup.bash" >> ~/.bashrc
+
+# Set the working folder at startup
+WORKDIR /catkin_ws
+
+# Set environment variables
+ENV ROS_MASTER_URI=http://localhost:11311/
+ENV ROS_HOSTNAME=localhost
+
+# Start a bash shell when the container starts
+ENTRYPOINT ["bash"]
+CMD ['-c','source /catkin_ws/devel/setup.bash ; roscore & roslaunch tortoisebot_gazebo tortoisebot_empty_world.launch headless:=true --wait']
