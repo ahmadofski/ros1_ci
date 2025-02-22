@@ -3,14 +3,12 @@ pipeline {
     stages {
         stage('Build Docker image') {
             steps {
-                sh 'cd ~/catkin_ws/src/ros1_ci'
-                sh 'sudo docker buildx build -f dockerfile_tortoisebot_waypoints -t ros1-tortoisebot-waypoints .'
+                sh 'cd ~/catkin_ws/src/ros1_ci && sudo docker buildx build -f dockerfile_tortoisebot_waypoints -t ros1-tortoisebot-waypoints .'
             }
         }
         stage('Run container') {
             steps {
-                sh 'cd ~/catkin_ws/src/ros1_ci'
-                sh 'sudo docker run --name test -d --rm -v ./test-script.sh:/test-script.sh ros1-tortoisebot-waypoints:latest'
+                sh 'cd ~/catkin_ws/src/ros1_ci && sudo docker run --name test -d --rm -v ./test-script.sh:/test-script.sh ros1-tortoisebot-waypoints:latest'
                 sleep 5
             }
         }
