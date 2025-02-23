@@ -21,8 +21,8 @@ pipeline {
             steps {
                 sh 'sudo docker stop test'
                 sh 'sudo docker rmi ros1-tortoisebot-waypoints:latest'
-                sh 'sudo docker image prune'
-                sh 'sudo docker container prune'
+                sh 'sudo docker image prune -f'
+                sh 'sudo docker container prune -f'
             }
         }
     }
