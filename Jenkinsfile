@@ -8,7 +8,9 @@ pipeline {
         }
         stage('Run container') {
             steps {
-                sh 'cd ~/catkin_ws/src/ros1_ci && sudo docker run --name test-ros1 -d --rm -v ./test-script.sh:/test-script.sh ros1-tortoisebot-waypoints:latest'
+                sh '''cd ~/catkin_ws/src/ros1_ci && sudo docker run --name test-ros1 -d --rm \
+                -v ./test-script.sh:/test-script.sh -v /tmp/.X11-unix:/tmp/.X11-unix \
+                -e DISPLAY=$DISPLAY ros1-tortoisebot-waypoints:latest'''
                 sleep 5
             }
         }
